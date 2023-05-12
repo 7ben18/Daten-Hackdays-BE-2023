@@ -88,21 +88,42 @@ server <- function(input, output) {
   # })
   
   output$plot <- renderLeaflet({
+    data <- data %>%
+      mutate(lat_rounded = round(lat, 2),
+             lon_rounded = round(lon, 2))
+    # group by lon and summarize by taking the first lat_rounded and count values
+    places <- data %>%
+      group_by(lon_rounded) %>%
+      summarise(lat_rounded = first(lat_rounded),
+                count = n(),
+                across(35:84, sum)) %>%
+       ungroup()
+      # slice_max(order_by = count, n = 5)
     
-    # places <- data %>%
-    #   group_by(lat) %>%
+    places <- places %>%
+      mutate(rownum = row_number())
     
-    leaflet() %>%
+    top_cols <- places %>% slice_max(order_by = count, n = 5)
+    
+    top_5_names <- apply(places[4:53], 1, function(x) names(x)[order(-x)][1:5])
+    top_5_values <- apply(places[4:53], 1, function(x) tail(sort(x), 5))
+    
+    # create leaflet map with markers for each unique lon value
+    leaflet(places) %>%
       addTiles() %>%
       addCircleMarkers(
-        lng = data$lon,
-        lat = data$lat,
-        label = data$Nummer,
-        radius = log(sum_applikation),
-        weight = 2,
-        clusterOptions = markerClusterOptions()
+        lng = ~lon_rounded,
+        lat = ~lat_rounded,
+        popup = ~paste0("Total: ", count,
+                        "<br>1nd: ", top_5_names[1, rownum], " : " , as.character(top_5_values[1, rownum]),
+                        "<br>2nd: ", top_5_names[2, rownum], " : " , as.character(top_5_values[2, rownum]),
+                        "<br>3rd: ", top_5_names[3, rownum], " : " , as.character(top_5_values[3, rownum]),
+                        "<br>4th: ", top_5_names[4, rownum], " : " , as.character(top_5_values[4, rownum]),
+                        "<br>5th: ", top_5_names[5, rownum], " : " , as.character(top_5_values[5, rownum])),
+        radius = ~log(count),
+        weight = 2
       ) %>%
-      setView(lng = 8.2275, lat = 46.8182, zoom = 8)
+      setView(lng = 8.5, lat = 46.75, zoom = 8)
       
   })
   
