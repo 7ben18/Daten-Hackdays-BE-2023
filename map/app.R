@@ -128,7 +128,7 @@ server <- function(input, output) {
   })
   
   output$table <- DT::renderDataTable({
-    DT::datatable(data[1:30], options = list(pageLength = 10), rownames = FALSE)
+    DT::datatable(data[c(1,2,5,7,9,16,19,20,21,23,24,25,26)], options = list(pageLength = 10), rownames = FALSE)
   })
   
   output$barplot <- renderPlot({
