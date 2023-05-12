@@ -1,14 +1,11 @@
-library(shiny)
-library(shinydashboard)
-library(dplyr)
-library(leaflet)
-library(readxl)
-setwd("/Users/lars/Projekte/230523_Hackdays/Daten-Hackdays-BE-2023/map")
-# data <- read_excel("Test.xlsx")
-# # 
-# # # save data as an R data file (rda)
-# save(data, file = "C:/Users/Student/Hackathon/Daten-Hackdays-BE-2023/map/data.rda")
 
+# Get the current directory path
+current_dir <- dirname(rstudioapi::getActiveDocumentContext()$path)
+
+# Set the working directory to the current directory
+setwd(current_dir)
+
+# Load the data from the relative path
 load("data.rda")
 
 
