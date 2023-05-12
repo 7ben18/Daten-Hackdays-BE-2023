@@ -2,14 +2,21 @@ library(shiny)
 library(shinydashboard)
 library(dplyr)
 library(leaflet)
-setwd("C:/Users/Student/OneDrive - Berner Fachhochschule/Desktop/Hackathon/map")
-data <- read_excel("Test.xlsx")
+library(readxl)
+setwd("C:/Users/Student/Hackathon/Daten-Hackdays-BE-2023/map")
+# data <- read_excel("Test.xlsx")
+# # 
+# # # save data as an R data file (rda)
+# save(data, file = "C:/Users/Student/Hackathon/Daten-Hackdays-BE-2023/map/data.rda")
+
+load("data.rda")
+
 
 sum_passwords <- sum(data$is_password)
 sum_installation <- sum(data$is_installation)
 sum_telefon <- sum(data$is_telefon)
 
-# n_us <- nrow(subset(nasa_fireball, lat<64.9 & lat>19.5, lon<-68 & lon>-161.8))
+n_ch <- nrow(subset(data, lat<47.81 & lat>45.77 & lon<10.49 & lon>5.97))
 
 body <- dashboardBody(
   fluidRow(
@@ -23,7 +30,10 @@ body <- dashboardBody(
 )
 
 sidebar <-dashboardSidebar(
-  sliderInput("threshold", "Color Threshold", min = 0, max = 120, value = 24)
+  sidebarMenu(
+    menuItem("Map", tabName = "Map"),
+    menuItem("Tables", tabName= "Tables")
+  )
 )
 
 ui <- dashboardPage(
@@ -48,12 +58,13 @@ server <- function(input, output) {
     leaflet() %>%
       addTiles() %>%
       addCircleMarkers(
-        lng = as.numeric(data$lng),
-        lat = as.numeric(data$lat),
-        # label = nasa_fireball$date,
+        lng = data$lon,
+        lat = data$lat,
+        label = data$Id,
         radius = log(sum_passwords),
         weight = 2
-      )
+      ) %>%
+      setView(lng = 8.2275, lat = 46.8182, zoom = 8)
   })
   
 }
