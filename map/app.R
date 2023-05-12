@@ -3,13 +3,15 @@ library(shinydashboard)
 library(dplyr)
 library(leaflet)
 library(readxl)
-setwd("C:/Users/Student/Hackathon/Daten-Hackdays-BE-2023/map")
+setwd("/Users/lars/Projekte/230523_Hackdays/Daten-Hackdays-BE-2023/map")
 # data <- read_excel("Test.xlsx")
 # # 
 # # # save data as an R data file (rda)
 # save(data, file = "C:/Users/Student/Hackathon/Daten-Hackdays-BE-2023/map/data.rda")
 
 load("data.rda")
+
+
 
 
 sum_passwords <- sum(data$is_password)
@@ -22,12 +24,13 @@ body <- dashboardBody(
   fluidRow(
     valueBox(sum_passwords, "Anzahl Wörter Passwort", icon = icon(name = "fire")),
     valueBox(sum_installation, "Anzahl Wörter Installation", icon = icon(name = "star")),
-    valueBox(sum_telefon, "Anzahl Wörter Telefon", icon = icon(name = "lightbulb-o"))
+    valueBox(sum_telefon, "Anzahl Wörter Telefon", icon = icon(name = "star"))
   ),
   fluidRow(
     leafletOutput("plot")
   )
 )
+
 
 sidebar <-dashboardSidebar(
   sidebarMenu(
@@ -62,9 +65,11 @@ server <- function(input, output) {
         lat = data$lat,
         label = data$Id,
         radius = log(sum_passwords),
-        weight = 2
+        weight = 2,
+        clusterOptions = markerClusterOptions()
       ) %>%
       setView(lng = 8.2275, lat = 46.8182, zoom = 8)
+      
   })
   
 }
