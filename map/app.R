@@ -71,7 +71,7 @@ sidebar <-dashboardSidebar(
     menuItem("Map", tabName = "Map"),
     menuItem("Tables", tabName= "Tables"),
     menuItem("Charts", tabName= "Charts")),
-  pickerInput("locInput","Serviceangebot", choices=unique(data$Serviceangebot), options = list(`actions-box` = TRUE),multiple = T)
+  pickerInput("locInput","Serviceangebot", choices=unique(data$Serviceangebot), options = list(`actions-box` = TRUE),multiple = T, selected = "SOF: E-Mail")
 )
 
 js_code <- '
@@ -102,7 +102,7 @@ ui <- dashboardPage(
   )
 )
 
-server <- function(input, output) {
+server <- function(input, output, session) {
 
   
   output$plot <- renderLeaflet({
