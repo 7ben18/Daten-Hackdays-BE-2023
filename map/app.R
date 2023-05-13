@@ -25,6 +25,7 @@ body <- dashboardBody(
   tabItems(
     # First tab content
     tabItem(tabName = "Map",
+            tags$style(type = "text/css", "#plot {height: calc(100vh - 80px) !important;}"),
             fluidRow(
               valueBox(sum_applikation, "Anzahl Wörter Passwort", icon = icon(name = "fire")),
               valueBox(sum_account, "Anzahl Wörter Installation", icon = icon(name = "star")),
@@ -134,7 +135,7 @@ server <- function(input, output, session) {
         radius = ~log(count),
         weight = 2
       ) %>%
-      setView(lng = 7.5, lat = 46.82, zoom = 8)
+      setView(lng = 7.5, lat = 46.82, zoom = 8.5)
       
   })
   
