@@ -118,7 +118,7 @@ server <- function(input, output) {
     # group by lon and summarize by taking the first lat_rounded and count values
     places <- data %>%
       group_by(lon_rounded) %>%
-      summarise(lat_rounded = first(lat_rounded),
+      summarise(lat_rounded = first(lat_rounded), Ort = first(Ort),
                 count = n(),
                 across(35:84, sum)) %>%
        ungroup()
