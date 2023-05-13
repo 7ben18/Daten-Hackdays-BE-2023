@@ -97,7 +97,7 @@ server <- function(input, output, session) {
   
   # Define reactive inputs
   filtered_data <- reactive({
-    data %>% filter(Serviceangebot %in% input$serviceInput)
+    data %>% filter(Serviceangebot %in% input$serviceInput, Ort %in% input$ortInput, Kategorie %in% input$kategorieInput)
   })
   
   sum_rows <- reactive({
@@ -111,37 +111,37 @@ server <- function(input, output, session) {
   
   # Box 2:
   filtered_data_2 <- reactive({
-    data %>% filter(Kategorie == "Fehler", Serviceangebot %in% input$serviceInput)
+    data %>% filter(Kategorie == "Fehler", Serviceangebot %in% input$serviceInput, Ort %in% input$ortInput, Kategorie %in% input$kategorieInput)
   })
   
-  sum_applikation_2 <- reactive({
-    sum(filtered_data_2()$applikation)
+  sum_rows_2 <- reactive({
+    nrow(filtered_data_2())
   })
   
   # Define output
   output$box_2 <- renderValueBox({
-    valueBox(sum_applikation_2(), subtitle = "Anzahl Fehler", icon = icon(name = "fire"), color = "blue")
+    valueBox(sum_rows_2(), subtitle = "Anzahl Fehler", icon = icon(name = "fire"), color = "blue")
   })
   
   # Box 3:
   filtered_data_3 <- reactive({
-    data %>% filter(Kategorie == "Anfrage", Serviceangebot %in% input$serviceInput)
+    data %>% filter(Kategorie == "Anfrage", Serviceangebot %in% input$serviceInput, Ort %in% input$ortInput, Kategorie %in% input$kategorieInput)
   })
   
-  sum_applikation_3 <- reactive({
-    sum(filtered_data_3()$applikation)
+  sum_rows_3 <- reactive({
+    nrow(filtered_data_3())
   })
   
   # Define output
   output$box_3 <- renderValueBox({
-    valueBox(sum_applikation_3(), subtitle = "Anzahl Anfragen", icon = icon(name = "fire"), color = "blue")
+    valueBox(sum_rows_3(), subtitle = "Anzahl Anfragen", icon = icon(name = "fire"), color = "blue")
   })
   
   # Map:
   
   output$plot <- renderLeaflet({
     data <- data %>%
-      filter(Serviceangebot %in% input$serviceInput) %>%
+      filter(Kategorie == "Anfrage", Serviceangebot %in% input$serviceInput, Ort %in% input$ortInput, Kategorie %in% input$kategorieInput) %>%
       mutate(lat_rounded = round(lat, 2),
              lon_rounded = round(lon, 2))
     # group by lon and summarize by taking the first lat_rounded and count values
