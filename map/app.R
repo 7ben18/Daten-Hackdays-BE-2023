@@ -80,10 +80,32 @@ sidebar <-dashboardSidebar(
   )
 )
 
+js_code <- '
+function copyToClipboard(text) {
+    var textarea = document.createElement("textarea");
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand("copy");
+    document.body.removeChild(textarea);
+    alert("Text copied to clipboard: " + text);
+}'
+
+css <- "
+custom-cursor:hover {
+    cursor: pointer;
+}
+"
+
+
 ui <- dashboardPage(
   dashboardHeader(),
   sidebar,
   body,
+  tags$head(
+    tags$script(HTML(js_code)),
+    tags$style(HTML(css))
+  )
 )
 
 server <- function(input, output) {
@@ -119,12 +141,12 @@ server <- function(input, output) {
         popup = ~paste0(
           "<table>",
           "<tr><td style='border-bottom: 1px solid black;' colspan='2'><strong>Total:</strong> ", count, "</td></tr>",
-          "<tr><td style='border-bottom: 1px solid black;' colspan='2'>", Ort, "</td></tr>",
-          "<tr><td>", top_5_names[1, rownum], ":</td><td>", paste0(format(top_5_values[1, rownum] / count * 100, digits = 2), "%"), "</td></tr>",
-          "<tr><td>", top_5_names[2, rownum], ":</td><td>", paste0(format(top_5_values[2, rownum] / count * 100, digits = 2), "%"), "</td></tr>",
-          "<tr><td>", top_5_names[3, rownum], ":</td><td>", paste0(format(top_5_values[3, rownum] / count * 100, digits = 2), "%"), "</td></tr>",
-          "<tr><td>", top_5_names[4, rownum], ":</td><td>", paste0(format(top_5_values[4, rownum] / count * 100, digits = 2), "%"), "</td></tr>",
+          "<tr><td onclick='copyToClipboard(\"", Ort, "\")',id = 'custom-cursor'' style='border-bottom: 1px solid black;' colspan='2'>", Ort, "</td></tr>",
           "<tr><td>", top_5_names[5, rownum], ":</td><td>", paste0(format(top_5_values[5, rownum] / count * 100, digits = 2), "%"), "</td></tr>",
+          "<tr><td>", top_5_names[4, rownum], ":</td><td>", paste0(format(top_5_values[4, rownum] / count * 100, digits = 2), "%"), "</td></tr>",
+          "<tr><td>", top_5_names[3, rownum], ":</td><td>", paste0(format(top_5_values[3, rownum] / count * 100, digits = 2), "%"), "</td></tr>",
+          "<tr><td>", top_5_names[2, rownum], ":</td><td>", paste0(format(top_5_values[2, rownum] / count * 100, digits = 2), "%"), "</td></tr>",
+          "<tr><td>", top_5_names[1, rownum], ":</td><td>", paste0(format(top_5_values[1, rownum] / count * 100, digits = 2), "%"), "</td></tr>",
           "</table>"
         ),
         radius = ~log(count),
