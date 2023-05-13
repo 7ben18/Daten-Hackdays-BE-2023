@@ -5,7 +5,7 @@ library(ggplot2)
 library(arrow) 
 library(jsonlite)
 library(DT)
-
+library(shinyWidgets)
 # Get the current directory path
 current_dir <- dirname(rstudioapi::getActiveDocumentContext()$path)
 
@@ -71,13 +71,7 @@ sidebar <-dashboardSidebar(
     menuItem("Map", tabName = "Map"),
     menuItem("Tables", tabName= "Tables"),
     menuItem("Charts", tabName= "Charts")),
-      selectInput(
-        inputId = "Serviceangebot",
-        label = "Select Service",
-        choices = c("All", unique(data$Serviceangebot)),
-        selected = "SOF: E-Mail"
-      
-  )
+  pickerInput("locInput","Serviceangebot", choices=unique(data$Serviceangebot), options = list(`actions-box` = TRUE),multiple = T)
 )
 
 ui <- dashboardPage(
@@ -136,7 +130,7 @@ server <- function(input, output) {
   
   output$table <- DT::renderDT({
     data[c(1,2,5,7,9,16,19,20,21,23,24,25,26)] %>%
-      filter(Serviceangebot == input$Serviceangebot)
+      filter(Serviceangebot %in% input$locInput)
   })
   
 
