@@ -53,7 +53,7 @@ body <- dashboardBody(
     # Second tab content
     tabItem(tabName = "Tables",
             fluidRow(
-              div(style = 'overflow-x: auto', DT::dataTableOutput("table"))
+              div(style = 'overflow-x: auto', DT::DTOutput("table"))
             )
     ),
     # Third tab content
@@ -70,7 +70,13 @@ sidebar <-dashboardSidebar(
   sidebarMenu(
     menuItem("Map", tabName = "Map"),
     menuItem("Tables", tabName= "Tables"),
-    menuItem("Charts", tabName= "Charts")
+    menuItem("Charts", tabName= "Charts")),
+      selectInput(
+        inputId = "Serviceangebot",
+        label = "Select Service",
+        choices = c("All", unique(data$Serviceangebot)),
+        selected = "SOF: E-Mail"
+      
   )
 )
 
@@ -81,35 +87,7 @@ ui <- dashboardPage(
 )
 
 server <- function(input, output) {
-  
-  # ... Existing code ...
-  
-  output$table1 <- DT::renderDataTable({
-    DT::datatable(data[c(1,2,5,7,9,16,19,20,21,23,24,25,26)], options = list(pageLength = 10), rownames = FALSE)
-  })
-  
-  output$table2 <- DT::renderDataTable({
-    DT::datatable(data[c(1,3,6,8,10,15,18,19,20,22,23,24,25)], 
-                  options = list(autoWidth = FALSE, scrollX = TRUE, pageLength = 10), 
-                  rownames = FALSE)
-  })
-  
-  
-  output$table3 <- DT::renderDataTable({
-    DT::datatable(data[c(1,4,7,9,11,14,17,19,20,21,23,24,25)], options = list(pageLength = 10), rownames = FALSE)
-  })
-  
-  # ... Existing code ...
-  # output$us_box <- renderValueBox({
-  #   valueBox(value = n_us,
-  #            subtitle = "Number of Fireball in the Us",
-  #            icon = icon("globe"),
-  #            color = color <- if (n_us < input$threshold){
-  #              "blue"
-  #            } else {
-  #              "fuchsia"
-  #            })
-  # })
+
   
   output$plot <- renderLeaflet({
     data <- data %>%
@@ -129,8 +107,8 @@ server <- function(input, output) {
     
     top_cols <- places %>% slice_max(order_by = count, n = 5)
     
-    top_5_names <- apply(places[4:53], 1, function(x) names(x)[order(-x)][1:5])
-    top_5_values <- apply(places[4:53], 1, function(x) tail(sort(x), 5))
+    top_5_names <- apply(places[5:54], 1, function(x) names(x)[order(-x)][1:5])
+    top_5_values <- apply(places[5:54], 1, function(x) tail(sort(x), 5))
     
     # create leaflet map with markers for each unique lon value
     leaflet(places) %>%
@@ -156,11 +134,9 @@ server <- function(input, output) {
       
   })
   
-  output$table <- DT::renderDataTable({
-    DT::datatable(data[c(1,2,5,7,9,16,19,20,21,23,24,25,26)], options = list(pageLength = 10), rownames = FALSE)
-  }) 
-  output$table <- DT::renderDataTable({
-    DT::datatable(data[c(1,2,5,7,9,16,19,20,21,23,24,25,26)], options = list(pageLength = 10), rownames = FALSE)
+  output$table <- DT::renderDT({
+    data[c(1,2,5,7,9,16,19,20,21,23,24,25,26)] %>%
+      filter(Serviceangebot == input$Serviceangebot)
   })
   
 
