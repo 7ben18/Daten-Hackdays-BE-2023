@@ -13,22 +13,7 @@ current_dir <- dirname(rstudioapi::getActiveDocumentContext()$path)
 setwd(current_dir)
 
 # Load the data from the relative path
-# data <- read_parquet(file = "Daten-Hackdays-BE-2023/Daten/Top50Words_onehotencoded_DataFrame_with_coordinates.parquet")
-
-data <- read_parquet("../Daten/Top50Words_onehotencoded_DataFrame_with_coordinates.parquet")
-
-
-#----- Generate rda
-# library(readxl)
-# data <- read_excel("../Daten/Test.xlsx")
-# #
-# # # save data as an R data file (rda)
-# save(data, file = "C:/Users/Student/Hackathon/Daten-Hackdays-BE-2023/map/data.rda")
-
-
-#-------
-
-
+data <- read_parquet("../Daten/tickets_export_topn_words_onehotencoded_with_coordinates.parquet")
 
 sum_applikation <- sum(data$applikation)
 sum_account <- sum(data$account)
@@ -40,6 +25,7 @@ body <- dashboardBody(
   tabItems(
     # First tab content
     tabItem(tabName = "Map",
+            tags$style(type = "text/css", "#plot {height: calc(100vh - 80px) !important;}"),
             fluidRow(
               valueBoxOutput("box_1"),
               valueBoxOutput("box_2"),
@@ -71,8 +57,11 @@ sidebar <-dashboardSidebar(
     menuItem("Map", tabName = "Map"),
     menuItem("Tables", tabName= "Tables"),
     menuItem("Charts", tabName= "Charts")),
-  pickerInput("locInput","Serviceangebot", choices=unique(data$Serviceangebot), options = list(`actions-box` = TRUE),multiple = T, selected = "SOF: E-Mail")
+  pickerInput("serviceInput","Serviceangebot", choices=unique(data$Serviceangebot), options = list(`actions-box` = TRUE),multiple = T, selected = unique(data$Serviceangebot)),
+  pickerInput("ortInput","Ort", choices=unique(data$Ort), options = list(`actions-box` = TRUE),multiple = T, selected = unique(data$Ort)),
+  pickerInput("kategorieInput","Kategorie", choices=unique(data$Kategorie), options = list(`actions-box` = TRUE), multiple = T, selected = unique(data$Kategorie))
 )
+
 
 js_code <- '
 function copyToClipboard(text) {
@@ -160,7 +149,7 @@ server <- function(input, output, session) {
       group_by(lon_rounded) %>%
       summarise(lat_rounded = first(lat_rounded), Ort = first(Ort),
                 count = n(),
-                across(35:84, sum)) %>%
+                across(33:82, sum)) %>%
        ungroup()
       # slice_max(order_by = count, n = 5)
     
@@ -189,10 +178,10 @@ server <- function(input, output, session) {
           "<tr><td>", top_5_names[1, rownum], ":</td><td>", paste0(format(top_5_values[1, rownum] / count * 100, digits = 2), "%"), "</td></tr>",
           "</table>"
         ),
-        radius = ~log(count),
+        radius = ~log(count^3),
         weight = 2
       ) %>%
-      setView(lng = 7.5, lat = 46.82, zoom = 8)
+      setView(lng = 7.5, lat = 46.82, zoom = 8.5)
       
   })
   
@@ -200,7 +189,7 @@ server <- function(input, output, session) {
   
   output$table <- DT::renderDT({
     data[c(1,2,5,7,9,16,19,20,21,23,24,25,26)] %>%
-      filter(Serviceangebot %in% input$locInput)
+      filter(Serviceangebot %in% input$serviceInput, Ort %in% input$ortInput, Kategorie %in% input$kategorieInput)
   })
   
   # Chart:
