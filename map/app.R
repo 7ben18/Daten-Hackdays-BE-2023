@@ -3,6 +3,8 @@ library(dplyr)
 library(leaflet)
 library(ggplot2)
 library(arrow) 
+library(jsonlite)
+
 # Get the current directory path
 current_dir <- dirname(rstudioapi::getActiveDocumentContext()$path)
 
@@ -10,6 +12,8 @@ current_dir <- dirname(rstudioapi::getActiveDocumentContext()$path)
 setwd(current_dir)
 
 # Load the data from the relative path
+# data <- read_parquet(file = "Daten-Hackdays-BE-2023/Daten/Top50Words_onehotencoded_DataFrame_with_coordinates.parquet")
+
 data <- read_parquet("../Daten/Top50Words_onehotencoded_DataFrame_with_coordinates.parquet")
 
 
@@ -38,7 +42,7 @@ body <- dashboardBody(
             fluidRow(
               valueBox(sum_applikation, "Anzahl Wörter Passwort", icon = icon(name = "fire")),
               valueBox(sum_account, "Anzahl Wörter Installation", icon = icon(name = "star")),
-              valueBox(sum_entsperrung, "Anzahl Wörter Telefon", icon = icon(name = "lightbulb-o"))
+              valueBox(sum_entsperrung, "Anzahl Wörter Telefon", icon = icon(name = "lightbulb"))
             ),
             fluidRow(
               leafletOutput("plot")
@@ -77,7 +81,7 @@ ui <- dashboardPage(
 
 server <- function(input, output) {
   # output$us_box <- renderValueBox({
-  #   valueBox(value = n_us, 
+  #   valueBox(value = n_us,
   #            subtitle = "Number of Fireball in the Us",
   #            icon = icon("globe"),
   #            color = color <- if (n_us < input$threshold){
@@ -110,17 +114,23 @@ server <- function(input, output) {
     DT::datatable(data[c(1,2,5,7,9,16,19,20,21,23,24,25,26)], options = list(pageLength = 10), rownames = FALSE)
   })
   
+  # Convert the named vector to a named list
+  # my_list <- as.list(my_vec)
+  # 
+  # # Convert the named list to JSON with keep_vec_names = TRUE
+  # my_json <- asJSON(my_list, keep_vec_names = TRUE)
+  
   output$barplot <- renderPlot({
     # create a data frame with the counts of each application
     app_counts <- data %>%
-      group_by(application) %>%
+      group_by(Organisation) %>%
       summarize(count = n()) %>%
       arrange(desc(count))
 
     # create the barplot using ggplot2
-    ggplot(data = app_counts, aes(x = application, y = count)) +
-      geom_bar(stat = "identity") +
-      theme(axis.text.x = element_text(angle = 90, hjust = 1)) # rotate x-axis labels if needed
+    print(ggplot(data = app_counts, aes(x = Organisation, y = count)) +
+            geom_bar(stat = "identity") +
+            theme(axis.text.x = element_text(angle = 90, hjust = 1))) # rotate x-axis labels if needed
   })
   
   
