@@ -94,7 +94,7 @@ server <- function(input, output) {
     # group by lon and summarize by taking the first lat_rounded and count values
     places <- data %>%
       group_by(lon_rounded) %>%
-      summarise(lat_rounded = first(lat_rounded),
+      summarise(lat_rounded = first(lat_rounded), Ort = first(Ort),
                 count = n(),
                 across(35:84, sum)) %>%
        ungroup()
@@ -115,6 +115,7 @@ server <- function(input, output) {
         lng = ~lon_rounded,
         lat = ~lat_rounded,
         popup = ~paste0("Total: ", count,
+                        "<br>Ort: ", Ort,
                         "<br>1nd: ", top_5_names[1, rownum], " : " , as.character(top_5_values[1, rownum]),
                         "<br>2nd: ", top_5_names[2, rownum], " : " , as.character(top_5_values[2, rownum]),
                         "<br>3rd: ", top_5_names[3, rownum], " : " , as.character(top_5_values[3, rownum]),
