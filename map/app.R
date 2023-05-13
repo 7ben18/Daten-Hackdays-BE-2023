@@ -4,6 +4,7 @@ library(leaflet)
 library(ggplot2)
 library(arrow) 
 library(jsonlite)
+library(DT)
 
 # Get the current directory path
 current_dir <- dirname(rstudioapi::getActiveDocumentContext()$path)
@@ -52,7 +53,7 @@ body <- dashboardBody(
     # Second tab content
     tabItem(tabName = "Tables",
             fluidRow(
-              DT::dataTableOutput("table")
+              div(style = 'overflow-x: auto', DT::dataTableOutput("table"))
             )
     ),
     # Third tab content
@@ -88,8 +89,11 @@ server <- function(input, output) {
   })
   
   output$table2 <- DT::renderDataTable({
-    DT::datatable(data[c(1,3,6,8,10,15,18,19,20,22,23,24,25)], options = list(pageLength = 10), rownames = FALSE)
+    DT::datatable(data[c(1,3,6,8,10,15,18,19,20,22,23,24,25)], 
+                  options = list(autoWidth = FALSE, scrollX = TRUE, pageLength = 10), 
+                  rownames = FALSE)
   })
+  
   
   output$table3 <- DT::renderDataTable({
     DT::datatable(data[c(1,4,7,9,11,14,17,19,20,21,23,24,25)], options = list(pageLength = 10), rownames = FALSE)
@@ -137,6 +141,7 @@ server <- function(input, output) {
         popup = ~paste0(
           "<table>",
           "<tr><td style='border-bottom: 1px solid black;' colspan='2'><strong>Total:</strong> ", count, "</td></tr>",
+          "<tr><td style='border-bottom: 1px solid black;' colspan='2'>", Ort, "</td></tr>",
           "<tr><td>", top_5_names[1, rownum], ":</td><td>", paste0(format(top_5_values[1, rownum] / count * 100, digits = 2), "%"), "</td></tr>",
           "<tr><td>", top_5_names[2, rownum], ":</td><td>", paste0(format(top_5_values[2, rownum] / count * 100, digits = 2), "%"), "</td></tr>",
           "<tr><td>", top_5_names[3, rownum], ":</td><td>", paste0(format(top_5_values[3, rownum] / count * 100, digits = 2), "%"), "</td></tr>",
@@ -147,7 +152,7 @@ server <- function(input, output) {
         radius = ~log(count),
         weight = 2
       ) %>%
-      setView(lng = 8.5, lat = 46.75, zoom = 8)
+      setView(lng = 7.5, lat = 46.82, zoom = 8)
       
   })
   
