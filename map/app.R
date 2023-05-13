@@ -132,7 +132,7 @@ server <- function(input, output, session) {
           "<tr><td>", top_5_names[1, rownum], ":</td><td>", paste0(format(top_5_values[1, rownum] / count * 100, digits = 2), "%"), "</td></tr>",
           "</table>"
         ),
-        radius = ~log(count),
+        radius = ~log(count^2),
         weight = 2
       ) %>%
       setView(lng = 7.5, lat = 46.82, zoom = 8.5)
