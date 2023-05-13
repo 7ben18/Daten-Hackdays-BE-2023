@@ -82,13 +82,16 @@ custom-cursor:hover {
 
 
 ui <- dashboardPage(
-  dashboardHeader(),
+  dashboardHeader(
+    title = "nXt level"
+  ),
   sidebar,
   body,
   tags$head(
     tags$script(HTML(js_code)),
-    tags$style(HTML(css))
-  )
+    tags$style(HTML(css)),
+  ),
+  skin = "purple"
 )
 
 server <- function(input, output, session) {
@@ -106,7 +109,7 @@ server <- function(input, output, session) {
   
   # Define output
   output$box_1 <- renderValueBox({
-    valueBox(sum_rows(), subtitle = "Anzahl Tickets:", icon = icon(name = "fire"), color = "blue")
+    valueBox(sum_rows(), subtitle = "Anzahl Tickets", icon = icon(name = "table-list"), color = "yellow")
   })
   
   # Box 2:
@@ -120,7 +123,7 @@ server <- function(input, output, session) {
   
   # Define output
   output$box_2 <- renderValueBox({
-    valueBox(sum_rows_2(), subtitle = "Anzahl Fehler", icon = icon(name = "fire"), color = "blue")
+    valueBox(sum_rows_2(), subtitle = "Anzahl Fehler", icon = icon(name = "fire"), color = "red")
   })
   
   # Box 3:
@@ -134,7 +137,7 @@ server <- function(input, output, session) {
   
   # Define output
   output$box_3 <- renderValueBox({
-    valueBox(sum_rows_3(), subtitle = "Anzahl Anfragen", icon = icon(name = "fire"), color = "blue")
+    valueBox(sum_rows_3(), subtitle = "Anzahl Anfragen", icon = icon(name = "question"), color = "aqua")
   })
   
   # Map:
