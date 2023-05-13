@@ -72,10 +72,26 @@ sidebar <-dashboardSidebar(
 ui <- dashboardPage(
   dashboardHeader(),
   sidebar,
-  body
+  body,
 )
 
 server <- function(input, output) {
+  
+  # ... Existing code ...
+  
+  output$table1 <- DT::renderDataTable({
+    DT::datatable(data[c(1,2,5,7,9,16,19,20,21,23,24,25,26)], options = list(pageLength = 10), rownames = FALSE)
+  })
+  
+  output$table2 <- DT::renderDataTable({
+    DT::datatable(data[c(1,3,6,8,10,15,18,19,20,22,23,24,25)], options = list(pageLength = 10), rownames = FALSE)
+  })
+  
+  output$table3 <- DT::renderDataTable({
+    DT::datatable(data[c(1,4,7,9,11,14,17,19,20,21,23,24,25)], options = list(pageLength = 10), rownames = FALSE)
+  })
+  
+  # ... Existing code ...
   # output$us_box <- renderValueBox({
   #   valueBox(value = n_us, 
   #            subtitle = "Number of Fireball in the Us",
@@ -116,12 +132,12 @@ server <- function(input, output) {
         lat = ~lat_rounded,
         popup = ~paste0(
           "<table>",
-          "<tr><td>Total:</td><td>", count, "</td></tr>",
-          "<tr><td>1st:</td><td>", top_5_names[1, rownum], ":</td><td>", as.character(top_5_values[1, rownum]), "</td></tr>",
-          "<tr><td>2nd:</td><td>", top_5_names[2, rownum], ":</td><td>", as.character(top_5_values[2, rownum]), "</td></tr>",
-          "<tr><td>3rd:</td><td>", top_5_names[3, rownum], ":</td><td>", as.character(top_5_values[3, rownum]), "</td></tr>",
-          "<tr><td>4th:</td><td>", top_5_names[4, rownum], ":</td><td>", as.character(top_5_values[4, rownum]), "</td></tr>",
-          "<tr><td>5th:</td><td>", top_5_names[5, rownum], ":</td><td>", as.character(top_5_values[5, rownum]), "</td></tr>",
+          "<tr><td style='border-bottom: 1px solid black;' colspan='2'><strong>Total:</strong> ", count, "</td></tr>",
+          "<tr><td>", top_5_names[1, rownum], ":</td><td>", paste0(format(top_5_values[1, rownum] / count * 100, digits = 2), "%"), "</td></tr>",
+          "<tr><td>", top_5_names[2, rownum], ":</td><td>", paste0(format(top_5_values[2, rownum] / count * 100, digits = 2), "%"), "</td></tr>",
+          "<tr><td>", top_5_names[3, rownum], ":</td><td>", paste0(format(top_5_values[3, rownum] / count * 100, digits = 2), "%"), "</td></tr>",
+          "<tr><td>", top_5_names[4, rownum], ":</td><td>", paste0(format(top_5_values[4, rownum] / count * 100, digits = 2), "%"), "</td></tr>",
+          "<tr><td>", top_5_names[5, rownum], ":</td><td>", paste0(format(top_5_values[5, rownum] / count * 100, digits = 2), "%"), "</td></tr>",
           "</table>"
         ),
         radius = ~log(count),
@@ -131,6 +147,9 @@ server <- function(input, output) {
       
   })
   
+  output$table <- DT::renderDataTable({
+    DT::datatable(data[c(1,2,5,7,9,16,19,20,21,23,24,25,26)], options = list(pageLength = 10), rownames = FALSE)
+  }) 
   output$table <- DT::renderDataTable({
     DT::datatable(data[c(1,2,5,7,9,16,19,20,21,23,24,25,26)], options = list(pageLength = 10), rownames = FALSE)
   })
