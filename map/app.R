@@ -53,7 +53,7 @@ body <- dashboardBody(
     # Second tab content
     tabItem(tabName = "Tables",
             fluidRow(
-              div(style = 'overflow-x: auto', DT::dataTableOutput("table"))
+              div(style = 'overflow-x: auto', DT::DTOutput("table"))
             )
     ),
     # Third tab content
@@ -74,7 +74,7 @@ sidebar <-dashboardSidebar(
       selectInput(
         inputId = "Serviceangebot",
         label = "Select Service",
-        choices = unique(data$Serviceangebot),
+        choices = c("All", unique(data$Serviceangebot)),
         selected = "SOF: E-Mail"
       
   )
@@ -135,7 +135,7 @@ server <- function(input, output) {
   })
   
   output$table <- DT::renderDT({
-    data[1:34] %>%
+    data[c(1,2,5,7,9,16,19,20,21,23,24,25,26)] %>%
       filter(Serviceangebot == input$Serviceangebot)
   })
   
