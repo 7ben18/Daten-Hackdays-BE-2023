@@ -56,8 +56,9 @@ sidebar <-dashboardSidebar(
     menuItem("Map", tabName = "Map"),
     menuItem("Tables", tabName= "Tables"),
     menuItem("Charts", tabName= "Charts")),
-  pickerInput("serviceInput","Serviceangebot", choices=unique(data$Serviceangebot), options = list(`actions-box` = TRUE),multiple = T, selected = "SOF: E-Mail"),
-  pickerInput("ortInput","Ort", choices=unique(data$Ort), options = list(`actions-box` = TRUE),multiple = T)
+  pickerInput("serviceInput","Serviceangebot", choices=unique(data$Serviceangebot), options = list(`actions-box` = TRUE),multiple = T, selected = unique(data$Serviceangebot)),
+  pickerInput("ortInput","Ort", choices=unique(data$Ort), options = list(`actions-box` = TRUE),multiple = T, selected = unique(data$Ort)),
+  pickerInput("kategorieInput","Kategorie", choices=unique(data$Kategorie), options = list(`actions-box` = TRUE), multiple = T, selected = unique(data$Kategorie))
 )
 
 
@@ -139,7 +140,7 @@ server <- function(input, output, session) {
   
   output$table <- DT::renderDT({
     data[c(1,2,5,7,9,16,19,20,21,23,24,25,26)] %>%
-      filter(Serviceangebot %in% input$serviceInput, Ort %in% input$ortInput)
+      filter(Serviceangebot %in% input$serviceInput, Ort %in% input$ortInput, Kategorie %in% input$kategorieInput)
   })
   
   
