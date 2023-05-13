@@ -4,6 +4,7 @@ library(leaflet)
 library(ggplot2)
 library(arrow) 
 library(jsonlite)
+library(DT)
 
 # Get the current directory path
 current_dir <- dirname(rstudioapi::getActiveDocumentContext()$path)
@@ -52,7 +53,7 @@ body <- dashboardBody(
     # Second tab content
     tabItem(tabName = "Tables",
             fluidRow(
-              DT::dataTableOutput("table")
+              div(style = 'overflow-x: auto', DT::dataTableOutput("table"))
             )
     ),
     # Third tab content
@@ -88,8 +89,11 @@ server <- function(input, output) {
   })
   
   output$table2 <- DT::renderDataTable({
-    DT::datatable(data[c(1,3,6,8,10,15,18,19,20,22,23,24,25)], options = list(pageLength = 10), rownames = FALSE)
+    DT::datatable(data[c(1,3,6,8,10,15,18,19,20,22,23,24,25)], 
+                  options = list(autoWidth = FALSE, scrollX = TRUE, pageLength = 10), 
+                  rownames = FALSE)
   })
+  
   
   output$table3 <- DT::renderDataTable({
     DT::datatable(data[c(1,4,7,9,11,14,17,19,20,21,23,24,25)], options = list(pageLength = 10), rownames = FALSE)
