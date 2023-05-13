@@ -135,23 +135,29 @@ server <- function(input, output) {
     DT::datatable(data[c(1,2,5,7,9,16,19,20,21,23,24,25,26)], options = list(pageLength = 10), rownames = FALSE)
   })
   
-  # Convert the named vector to a named list
-  # my_list <- as.list(my_vec)
-  # 
-  # # Convert the named list to JSON with keep_vec_names = TRUE
-  # my_json <- asJSON(my_list, keep_vec_names = TRUE)
-  
+
   output$barplot <- renderPlot({
     # create a data frame with the counts of each application
-    app_counts <- data %>%
-      group_by(Organisation) %>%
-      summarize(count = n()) %>%
-      arrange(desc(count))
+    top_10 <- data %>%
+      group_by(Serviceangebot) %>%
+      summarize(Anzahl_tickets = n()) %>%
+      arrange(desc(Anzahl_tickets)) %>% 
+      slice(1:10) %>%
+      mutate(Serviceangebot = factor(if_else(row_number() == 10, "Other", as.character(Serviceangebot)))) %>%
+      group_by(Serviceangebot) %>%
+      summarize(Anzahl_tickets = sum(Anzahl_tickets)) %>% 
+      arrange(desc(Anzahl_tickets))  
 
     # create the barplot using ggplot2
-    print(ggplot(data = app_counts, aes(x = Organisation, y = count)) +
+    print(ggplot(data = top_10, aes(x = Serviceangebot, y = Anzahl_tickets, fill = Serviceangebot)) +
             geom_bar(stat = "identity") +
-            theme(axis.text.x = element_text(angle = 90, hjust = 1))) # rotate x-axis labels if needed
+            scale_fill_brewer(palette = "Set1") +
+            xlab("Serviceangebot") + 
+            ylab("Number of Tickets") +
+            ggtitle("Top 10 Serviceangebot with Most Tickets") +
+            scale_x_discrete(labels = NULL) +
+            theme(axis.text.x = element_text(angle = 90, hjust = 1))) + # rotate x-axis labels if needed
+            theme_light()
   })
   
   
