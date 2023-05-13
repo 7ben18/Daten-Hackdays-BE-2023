@@ -13,22 +13,7 @@ current_dir <- dirname(rstudioapi::getActiveDocumentContext()$path)
 setwd(current_dir)
 
 # Load the data from the relative path
-# data <- read_parquet(file = "Daten-Hackdays-BE-2023/Daten/Top50Words_onehotencoded_DataFrame_with_coordinates.parquet")
-
-data <- read_parquet("../Daten/Top50Words_onehotencoded_DataFrame_with_coordinates.parquet")
-
-
-#----- Generate rda
-# library(readxl)
-# data <- read_excel("../Daten/Test.xlsx")
-# #
-# # # save data as an R data file (rda)
-# save(data, file = "C:/Users/Student/Hackathon/Daten-Hackdays-BE-2023/map/data.rda")
-
-
-#-------
-
-
+data <- read_parquet("../Daten/tickets_export_topn_words_onehotencoded_with_coordinates.parquet")
 
 sum_applikation <- sum(data$applikation)
 sum_account <- sum(data$account)
@@ -71,7 +56,7 @@ sidebar <-dashboardSidebar(
     menuItem("Map", tabName = "Map"),
     menuItem("Tables", tabName= "Tables"),
     menuItem("Charts", tabName= "Charts")),
-  pickerInput("serviceInput","Serviceangebot", choices=unique(data$Serviceangebot), options = list(`actions-box` = TRUE),multiple = T),
+  pickerInput("serviceInput","Serviceangebot", choices=unique(data$Serviceangebot), options = list(`actions-box` = TRUE),multiple = T, selected = "SOF: E-Mail"),
   pickerInput("ortInput","Ort", choices=unique(data$Ort), options = list(`actions-box` = TRUE),multiple = T)
 )
 
@@ -104,7 +89,7 @@ ui <- dashboardPage(
   )
 )
 
-server <- function(input, output) {
+server <- function(input, output, session) {
 
   
   output$plot <- renderLeaflet({
@@ -116,7 +101,7 @@ server <- function(input, output) {
       group_by(lon_rounded) %>%
       summarise(lat_rounded = first(lat_rounded), Ort = first(Ort),
                 count = n(),
-                across(35:84, sum)) %>%
+                across(33:82, sum)) %>%
        ungroup()
       # slice_max(order_by = count, n = 5)
     
