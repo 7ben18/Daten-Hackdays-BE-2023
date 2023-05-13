@@ -41,9 +41,9 @@ body <- dashboardBody(
     # First tab content
     tabItem(tabName = "Map",
             fluidRow(
-              valueBox(sum_applikation, "Anzahl Wörter Passwort", icon = icon(name = "fire")),
-              valueBox(sum_account, "Anzahl Wörter Installation", icon = icon(name = "star")),
-              valueBox(sum_entsperrung, "Anzahl Wörter Telefon", icon = icon(name = "lightbulb"))
+              valueBoxOutput("box_1"),
+              valueBoxOutput("box_2"),
+              valueBoxOutput("box_3")
             ),
             fluidRow(
               leafletOutput("plot")
@@ -103,10 +103,56 @@ ui <- dashboardPage(
 )
 
 server <- function(input, output, session) {
-
+  
+  # BOX 1:
+  
+  # Define reactive inputs
+  filtered_data <- reactive({
+    data %>% filter(Serviceangebot %in% input$locInput)
+  })
+  
+  sum_rows <- reactive({
+    nrow(filtered_data())
+  })
+  
+  # Define output
+  output$box_1 <- renderValueBox({
+    valueBox(sum_rows(), subtitle = "Anzahl Tickets:", icon = icon(name = "fire"), color = "blue")
+  })
+  
+  # Box 2:
+  filtered_data_2 <- reactive({
+    data %>% filter(Kategorie == "Fehler", Serviceangebot %in% input$locInput)
+  })
+  
+  sum_applikation_2 <- reactive({
+    sum(filtered_data_2()$applikation)
+  })
+  
+  # Define output
+  output$box_2 <- renderValueBox({
+    valueBox(sum_applikation_2(), subtitle = "Anzahl Fehler", icon = icon(name = "fire"), color = "blue")
+  })
+  
+  # Box 3:
+  filtered_data_3 <- reactive({
+    data %>% filter(Kategorie == "Anfrage", Serviceangebot %in% input$locInput)
+  })
+  
+  sum_applikation_3 <- reactive({
+    sum(filtered_data_3()$applikation)
+  })
+  
+  # Define output
+  output$box_3 <- renderValueBox({
+    valueBox(sum_applikation_3(), subtitle = "Anzahl Anfragen", icon = icon(name = "fire"), color = "blue")
+  })
+  
+  # Map:
   
   output$plot <- renderLeaflet({
     data <- data %>%
+      filter(Serviceangebot %in% input$locInput) %>%
       mutate(lat_rounded = round(lat, 2),
              lon_rounded = round(lon, 2))
     # group by lon and summarize by taking the first lat_rounded and count values
@@ -150,11 +196,14 @@ server <- function(input, output, session) {
       
   })
   
+  # Table:
+  
   output$table <- DT::renderDT({
     data[c(1,2,5,7,9,16,19,20,21,23,24,25,26)] %>%
       filter(Serviceangebot %in% input$locInput)
   })
   
+  # Chart:
 
   output$barplot <- renderPlot({
     # create a data frame with the counts of each application
