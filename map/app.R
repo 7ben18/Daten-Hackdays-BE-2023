@@ -97,7 +97,7 @@ server <- function(input, output, session) {
   
   # Define reactive inputs
   filtered_data <- reactive({
-    data %>% filter(Serviceangebot %in% input$locInput)
+    data %>% filter(Serviceangebot %in% input$serviceInput)
   })
   
   sum_rows <- reactive({
@@ -111,7 +111,7 @@ server <- function(input, output, session) {
   
   # Box 2:
   filtered_data_2 <- reactive({
-    data %>% filter(Kategorie == "Fehler", Serviceangebot %in% input$locInput)
+    data %>% filter(Kategorie == "Fehler", Serviceangebot %in% input$serviceInput)
   })
   
   sum_applikation_2 <- reactive({
@@ -125,7 +125,7 @@ server <- function(input, output, session) {
   
   # Box 3:
   filtered_data_3 <- reactive({
-    data %>% filter(Kategorie == "Anfrage", Serviceangebot %in% input$locInput)
+    data %>% filter(Kategorie == "Anfrage", Serviceangebot %in% input$serviceInput)
   })
   
   sum_applikation_3 <- reactive({
@@ -141,7 +141,7 @@ server <- function(input, output, session) {
   
   output$plot <- renderLeaflet({
     data <- data %>%
-      filter(Serviceangebot %in% input$locInput) %>%
+      filter(Serviceangebot %in% input$serviceInput) %>%
       mutate(lat_rounded = round(lat, 2),
              lon_rounded = round(lon, 2))
     # group by lon and summarize by taking the first lat_rounded and count values
