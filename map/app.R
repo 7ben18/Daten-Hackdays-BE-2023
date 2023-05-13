@@ -141,6 +141,7 @@ server <- function(input, output) {
         popup = ~paste0(
           "<table>",
           "<tr><td style='border-bottom: 1px solid black;' colspan='2'><strong>Total:</strong> ", count, "</td></tr>",
+          "<tr><td style='border-bottom: 1px solid black;' colspan='2'>", Ort, "</td></tr>",
           "<tr><td>", top_5_names[1, rownum], ":</td><td>", paste0(format(top_5_values[1, rownum] / count * 100, digits = 2), "%"), "</td></tr>",
           "<tr><td>", top_5_names[2, rownum], ":</td><td>", paste0(format(top_5_values[2, rownum] / count * 100, digits = 2), "%"), "</td></tr>",
           "<tr><td>", top_5_names[3, rownum], ":</td><td>", paste0(format(top_5_values[3, rownum] / count * 100, digits = 2), "%"), "</td></tr>",
@@ -151,7 +152,7 @@ server <- function(input, output) {
         radius = ~log(count),
         weight = 2
       ) %>%
-      setView(lng = 8.5, lat = 46.75, zoom = 8)
+      setView(lng = 7.5, lat = 46.82, zoom = 8)
       
   })
   
