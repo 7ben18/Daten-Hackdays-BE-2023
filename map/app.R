@@ -114,12 +114,16 @@ server <- function(input, output) {
       addCircleMarkers(
         lng = ~lon_rounded,
         lat = ~lat_rounded,
-        popup = ~paste0("Total: ", count,
-                        "<br>1nd: ", top_5_names[1, rownum], " : " , as.character(top_5_values[1, rownum]),
-                        "<br>2nd: ", top_5_names[2, rownum], " : " , as.character(top_5_values[2, rownum]),
-                        "<br>3rd: ", top_5_names[3, rownum], " : " , as.character(top_5_values[3, rownum]),
-                        "<br>4th: ", top_5_names[4, rownum], " : " , as.character(top_5_values[4, rownum]),
-                        "<br>5th: ", top_5_names[5, rownum], " : " , as.character(top_5_values[5, rownum])),
+        popup = ~paste0(
+          "<table>",
+          "<tr><td>Total:</td><td>", count, "</td></tr>",
+          "<tr><td>1st:</td><td>", top_5_names[1, rownum], ":</td><td>", as.character(top_5_values[1, rownum]), "</td></tr>",
+          "<tr><td>2nd:</td><td>", top_5_names[2, rownum], ":</td><td>", as.character(top_5_values[2, rownum]), "</td></tr>",
+          "<tr><td>3rd:</td><td>", top_5_names[3, rownum], ":</td><td>", as.character(top_5_values[3, rownum]), "</td></tr>",
+          "<tr><td>4th:</td><td>", top_5_names[4, rownum], ":</td><td>", as.character(top_5_values[4, rownum]), "</td></tr>",
+          "<tr><td>5th:</td><td>", top_5_names[5, rownum], ":</td><td>", as.character(top_5_values[5, rownum]), "</td></tr>",
+          "</table>"
+        ),
         radius = ~log(count),
         weight = 2
       ) %>%
